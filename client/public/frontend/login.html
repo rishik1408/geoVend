@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login | geoVend</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <div class="auth-container">
+        <h2>Login to geoVend</h2>
+        <form action="http://127.0.0.1:5000/api/login" method="POST" class="auth-form">
+            
+            <label for="role">I am a:</label>
+            <select name="role" id="role" required>
+                <option value="user">Consumer (User)</option>
+                <option value="vendor">Street Vendor</option>
+                <option value="admin">City Planner (Admin)</option>
+            </select>
+
+            <label for="username">Email / Username:</label>
+            <input type="text" id="username" name="username" required>
+
+            <label for="password">Password:</label>
+            <input type="password" id="password" name="password" required>
+
+            <button type="submit" class="btn-primary">Log In</button>
+        </form>
+        <p><a href="index.html">← Back to Home</a></p>
+    </div>
+</body>
+</html>

@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>VENDtrack Admin</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <style>
+        body { display: flex; margin: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #f0f2f5; }
+        .sidebar { width: 250px; height: 100vh; background: #1e293b; color: white; position: fixed; padding: 20px; }
+        .sidebar a { display: block; color: #cbd5e1; padding: 12px; text-decoration: none; margin-bottom: 10px; border-radius: 5px; }
+        .sidebar a:hover { background: #334155; color: white; }
+        .main-content { margin-left: 290px; padding: 40px; width: calc(100% - 290px); }
+        .card { background: white; padding: 20px; border-radius: 12px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
+    </style>
+</head>
+<body>
+    <div class="sidebar">
+        <h2>VENDtrack Admin</h2>
+        <hr style="opacity: 0.2;">
+        <a href="/admin">📊 Command Centre</a>
+        <a href="/admin/map">🗺️ God-Mode Map</a>
+        <a href="/admin/directory">📋 Vendor Directory</a>
+        <a href="/admin/analytics">📈 Analytics Hub</a>
+        <br>
+        <a href="/" style="font-size: 0.8em; color: #94a3b8;">← Exit to Main Portal</a>
+    </div>
+    <div class="main-content">
+        {% block content %}{% endblock %}
+    </div>
+</body>
+</html>
