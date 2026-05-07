@@ -1,36 +1,41 @@
-from flask import Flask, request, jsonify, redirect
+from flask import Flask, request, render_template, redirect, url_for
 import sqlite3
+import os
 
 app = Flask(__name__)
 
 def get_db_connection():
-    conn = sqlite3.connect('geovend.db')
+    base_dir = os.path.dirname(os.path.abspath(__file__))
+    db_path = os.path.join(base_dir, 'geovend.db')
+    
+    conn = sqlite3.connect(db_path)
     conn.row_factory = sqlite3.Row
     return conn
 
-@app.route('/api/login', methods=['POST'])
+# Serve the Landing Page
+@app.route('/')
+def home():
+    return render_template('index.html')
+
+# Serve the Login Page & Handle Authentication
+@app.route('/login', methods=['GET', 'POST'])
 def login():
-    role = request.form.get('role')
-    username = request.form.get('username')
-    password = request.form.get('password')
+    if request.method == 'POST':
+        role = request.form.get('role')
+        username = request.form.get('username')
+        password = request.form.get('password')
 
-    conn = get_db_connection()
-    user = conn.execute('SELECT * FROM users WHERE username = ? AND password = ? AND role = ?', 
-                        (username, password, role)).fetchone()
-    conn.close()
+        conn = get_db_connection()
+        user = conn.execute('SELECT * FROM users WHERE username = ? AND password = ? AND role = ?', 
+                            (username, password, role)).fetchone()
+        conn.close()
 
-    if user:
-        # Based on their account type, redirect to the appropriate mock dashboard
-        if role == 'user':
-            return jsonify({"status": "success", "message": "Redirecting to Live Discovery Map..."})
-        elif role == 'vendor':
-            return jsonify({"status": "success", "message": "Redirecting to Vendor Dashboard..."})
-        elif role == 'admin':
-            return jsonify({"status": "success", "message": "Redirecting to Admin Command Center..."})
-    else:
-        return jsonify({"status": "error", "message": "Invalid credentials or incorrect role."}), 401
+        if user:
+            return f"<h1>Success! Logged in as {role}</h1><p>Welcome, {username}. Redirecting to your dashboard...</p>"
+        else:
+            return render_template('login.html', error="Invalid credentials or incorrect role.")
+
+    return render_template('login.html')
 
 if __name__ == '__main__':
-    # Run the abstract backend on localhost:5000
     app.run(debug=True, port=5000)
-    

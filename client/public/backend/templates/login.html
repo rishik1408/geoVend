@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login | geoVend</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body class="bg-navy">
+    <nav class="navbar text-white">
+        <div class="logo">geoVend</div>
+        <div class="nav-links">
+            <a href="/">← BACK TO HOME</a>
+        </div>
+    </nav>
+
+    <div class="auth-wrapper fade-in">
+        <div class="auth-card">
+            <h2>Access Portal</h2>
+            
+            <form action="/login" method="POST" class="auth-form">
+                <div class="input-group">
+                    <label for="role">Account Type</label>
+                    <select name="role" id="role" required>
+                        <option value="user">Consumer (User)</option>
+                        <option value="vendor">Street Vendor</option>
+                        <option value="admin">City Planner (Admin)</option>
+                    </select>
+                </div>
+
+                <div class="input-group">
+                    <label for="username">Username</label>
+                    <input type="text" id="username" name="username" placeholder="Enter username" required>
+                </div>
+
+                <div class="input-group">
+                    <label for="password">Password</label>
+                    <input type="password" id="password" name="password" placeholder="••••••••" required>
+                </div>
+
+                <button type="submit" class="btn btn-primary full-width">Secure Login</button>
+                
+                {% if error %}
+                <p class="error-msg">{{ error }}</p>
+                {% endif %}
+            </form>
+        </div>
+    </div>
+</body>
+</html>
