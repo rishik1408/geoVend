@@ -6,12 +6,10 @@ import os
 app = Flask(__name__)
 
 # --- GEOFENCING CONFIGURATION (RNSIT AREA) ---
-# These coordinates define the 'Safe Zone' rectangle
 LAT_MIN, LAT_MAX = 12.9010, 12.9050
 LON_MIN, LON_MAX = 77.5160, 77.5210
 
 def init_db():
-    """Creates the database and vendor table if they don't exist."""
     with sqlite3.connect('database.db') as conn:
         conn.execute('''
             CREATE TABLE IF NOT EXISTS vendors (
@@ -25,26 +23,53 @@ def init_db():
     print("Database initialised.")
 
 def check_geofence(lat, lon):
-    """Mathematical check: Is the coordinate inside our rectangle?"""
     return LAT_MIN <= lat <= LAT_MAX and LON_MIN <= lon <= LON_MAX
 
-# --- FRONTEND ROUTES ---
+# --- PORTAL ROUTES (Customer & Vendor) ---
 
 @app.route('/')
 def index():
-    """Main Landing Page / Dashboard summary."""
+    """Main Landing Page / Welcome Portal."""
     return render_template('dashboard.html')
 
 @app.route('/map')
-def map_page():
-    """The OpenStreetMap tracking page."""
-    return render_template('map.html')
+def customer_map():
+    """Customer View: Live map to find nearby vendors."""
+    return render_template('customer_map.html')
+
+@app.route('/vendor')
+def vendor_portal():
+    """Vendor View: Personal compliance and status."""
+    return render_template('vendor_portal.html')
+
+# --- ADMIN PORTAL ROUTES ---
+
+@app.route('/admin')
+def admin_dashboard():
+    with sqlite3.connect('database.db') as conn:
+        total = conn.execute('SELECT COUNT(*) FROM vendors').fetchone()[0]
+        violations = conn.execute('SELECT COUNT(*) FROM vendors WHERE is_inside = 0').fetchone()[0]
+    return render_template('admin_dashboard.html', total=total, violations=violations)
+
+@app.route('/admin/map')
+def admin_map():
+    """Admin God-Mode Map: Includes zoning overlays."""
+    return render_template('admin_map.html')
+
+@app.route('/admin/directory')
+def admin_directory():
+    """Admin CRM: Detailed table of all registered vendors."""
+    return render_template('admin_directory.html')
+
+@app.route('/admin/analytics')
+def admin_analytics():
+    """Admin Analytics: Historical heatmaps and IoT data."""
+    return render_template('admin_analytics.html')
 
 # --- BACKEND API ROUTES ---
 
 @app.route('/api/location', methods=['POST'])
 def update_location():
-    """Endpoint for ESP32 or Testing Tools (cURL/Postman)."""
     try:
         data = request.get_json()
         cart_id = data.get('cart_id')
@@ -66,7 +91,6 @@ def update_location():
 
 @app.route('/api/vendors', methods=['GET'])
 def get_vendors():
-    """Returns all vendor data as JSON for the Map to read."""
     with sqlite3.connect('database.db') as conn:
         conn.row_factory = sqlite3.Row
         rows = conn.execute('SELECT * FROM vendors').fetchall()
@@ -74,5 +98,4 @@ def get_vendors():
 
 if __name__ == '__main__':
     init_db()
-    # host='0.0.0.0' allows other devices (ESP32) on your Wi-Fi to connect
     app.run(host='0.0.0.0', port=5000, debug=True)

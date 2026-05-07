@@ -1,0 +1,12 @@
+{% extends "admin_base.html" %}
+{% block content %}
+<div class="header">
+    <h1>Welcome, Admin 👋</h1>
+    <p>RNSIT Campus Oversight</p>
+</div>
+<div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px;">
+    <div class="card"><h3>Active Carts</h3><p style="font-size: 2em; color: #3b82f6;">12</p></div>
+    <div class="card"><h3>Live Violations</h3><p style="font-size: 2em; color: #ef4444;">0</p></div>
+    <div class="card"><h3>Revenue Today</h3><p style="font-size: 2em; color: #10b981;">₹4,200</p></div>
+</div>
+{% endblock %}
