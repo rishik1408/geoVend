@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 900" preserveAspectRatio="xMidYMid slice">
+  <!-- Layer 1: Lightest Mint -->
+  <path fill="#d1fae5" d="M1440,0 L1440,900 L800,900 C1000,700 800,500 1100,200 C1200,100 1300,0 1440,0 Z" />
+  
+  <!-- Layer 2: Mint -->
+  <path fill="#6ee7b7" d="M1440,0 L1440,900 L950,900 C1100,750 950,550 1200,250 C1280,150 1350,50 1440,0 Z" />
+  
+  <!-- Layer 3: Light Teal -->
+  <path fill="#20b2aa" d="M1440,0 L1440,900 L1100,900 C1200,800 1100,600 1300,300 C1350,200 1400,100 1440,0 Z" />
+  
+  <!-- Layer 4: Dark Teal -->
+  <path fill="#128c7e" d="M1440,0 L1440,900 L1250,900 C1320,850 1250,650 1400,350 C1420,250 1430,150 1440,0 Z" />
+  
+  <!-- Layer 5: Deep Blue -->
+  <path fill="#0a1f3a" d="M1440,0 L1440,900 L1380,900 C1400,880 1380,700 1440,400 Z" />
+</svg>

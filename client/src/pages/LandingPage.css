@@ -1,0 +1,127 @@
+.landing-container {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.hero-section {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  padding: 0 var(--spacing-3xl);
+  margin-top: 80px; /* Offset for navbar */
+}
+
+.hero-content {
+  max-width: 500px;
+  animation: slideUp 0.8s ease-out forwards;
+  opacity: 0;
+  transform: translateY(20px);
+}
+
+.hero-title {
+  font-size: 4rem;
+  color: var(--color-primary-dark);
+  margin-bottom: var(--spacing-md);
+  letter-spacing: -1px;
+}
+
+.text-highlight {
+  color: var(--color-secondary-dark);
+}
+
+.hero-subtitle {
+  font-size: 1.125rem;
+  color: var(--color-text-muted);
+  margin-bottom: var(--spacing-2xl);
+  line-height: 1.6;
+}
+
+.hero-actions {
+  display: flex;
+  gap: var(--spacing-md);
+}
+
+@keyframes slideUp {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (max-width: 768px) {
+  .hero-section {
+    padding: 0 var(--spacing-md);
+  }
+  
+  .hero-title {
+    font-size: 3rem;
+  }
+  
+  .hero-actions {
+    flex-direction: column;
+  }
+}
+
+/* Overview Section Styles */
+.overview-section {
+  padding: var(--spacing-3xl) var(--spacing-md);
+  background: var(--color-surface);
+  position: relative;
+  z-index: 10;
+}
+
+.overview-container {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.overview-title {
+  text-align: center;
+  font-size: 2.5rem;
+  color: var(--color-primary-dark);
+  margin-bottom: var(--spacing-3xl);
+}
+
+.overview-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: var(--spacing-2xl);
+}
+
+.overview-card {
+  padding: var(--spacing-2xl);
+  position: relative;
+  text-align: left;
+  background: rgba(240, 253, 250, 0.5); /* Light mint tint */
+}
+
+.step-number {
+  position: absolute;
+  top: -20px;
+  left: 20px;
+  width: 50px;
+  height: 50px;
+  background: var(--color-secondary-dark);
+  color: white;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+  font-weight: 700;
+  font-family: var(--font-heading);
+  box-shadow: var(--shadow-md);
+}
+
+.overview-card h3 {
+  color: var(--color-primary-dark);
+  margin-top: var(--spacing-md);
+  margin-bottom: var(--spacing-md);
+  font-size: 1.5rem;
+}
+
+.overview-card p {
+  color: var(--color-text-muted);
+  line-height: 1.6;
+}
