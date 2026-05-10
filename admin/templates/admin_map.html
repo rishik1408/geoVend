@@ -1,0 +1,80 @@
+{% extends "admin_base.html" %}
+{% block content %}
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+
+<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; font-family: 'Poppins', sans-serif;">
+    <h2 style="margin: 0; color: #0f172a;">Global Geospatial Overview</h2>
+    <span style="background: #ecfdf5; color: #10b981; padding: 6px 12px; border-radius: 20px; font-size: 12px; font-weight: 600; display: flex; align-items: center; gap: 6px;">
+        <span style="width: 8px; height: 8px; background: #10b981; border-radius: 50%; display: inline-block;"></span>
+        Live Tracking Active
+    </span>
+</div>
+
+<div style="position: relative; height: 75vh; width: 100%; border-radius: 16px; overflow: hidden; box-shadow: 0 10px 25px rgba(0,0,0,0.05); border: 1px solid #e2e8f0; font-family: 'Poppins', sans-serif;">
+    
+    <div style="position: absolute; top: 20px; right: 20px; z-index: 1000; background: rgba(255, 255, 255, 0.95); padding: 20px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); backdrop-filter: blur(8px); border: 1px solid #f1f5f9;">
+        <h3 style="margin: 0 0 16px 0; font-size: 14px; color: #0f172a; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px;">Zoning Legend</h3>
+        <div style="display: flex; align-items: center; margin-bottom: 12px; font-size: 13px; color: #475569;">
+            <span style="display: inline-block; width: 16px; height: 16px; margin-right: 12px; background: rgba(16, 185, 129, 0.15); border: 2px solid #10b981; border-radius: 4px;"></span> 
+            Approved Commercial Zone
+        </div>
+        <div style="display: flex; align-items: center; font-size: 13px; color: #475569;">
+            <span style="display: inline-block; width: 16px; height: 16px; margin-right: 12px; background: rgba(239, 68, 68, 0.15); border: 2px solid #ef4444; border-radius: 50%;"></span> 
+            Restricted / No-Vending Zone
+        </div>
+    </div>
+
+    <div id="map" style="height: 100%; width: 100%; z-index: 1;"></div>
+</div>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script>
+    const map = L.map('map', { zoomControl: false }).setView([12.903, 77.518], 15);
+    
+    L.control.zoom({ position: 'bottomright' }).addTo(map);
+    
+    L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
+        attribution: '&copy; OpenStreetMap &copy; CARTO'
+    }).addTo(map);
+
+    // Geofence Overlays (Adjust coordinates as per your app.py)
+    L.rectangle([[12.901, 77.516], [12.905, 77.521]], {color: "#10b981", weight: 2, fillOpacity: 0.1, dashArray: '5, 5'}).addTo(map);
+    L.circle([12.910, 77.525], {radius: 400, color: "#ef4444", weight: 2, fillOpacity: 0.1}).addTo(map);
+
+    let markers = {};
+
+    async function fetchAndRenderVendors() {
+        try {
+            const response = await fetch('/api/vendors');
+            const vendors = await response.json();
+            
+            vendors.forEach(v => {
+                const markerColour = v.is_inside ? "#10b981" : "#ef4444";
+                const statusText = v.is_inside ? "Compliant" : "Violation";
+                
+                const popupContent = `
+                    <div style="font-family: 'Poppins', sans-serif; min-width: 150px;">
+                        <h4 style="margin: 0 0 8px 0; color: #0f172a; border-bottom: 1px solid #e2e8f0; padding-bottom: 4px;">ID: ${v.cart_id}</h4>
+                        <div style="font-size: 13px; color: #475569; margin-bottom: 4px;">Status: <span style="color: ${markerColour}; font-weight: 600;">${statusText}</span></div>
+                        <div style="font-size: 11px; color: #94a3b8;">Updated: ${v.last_updated}</div>
+                    </div>
+                `;
+
+                if (markers[v.cart_id]) {
+                    markers[v.cart_id].setLatLng([v.lat, v.lon]).setStyle({fillColor: markerColour});
+                    markers[v.cart_id].getPopup().setContent(popupContent);
+                } else {
+                    markers[v.cart_id] = L.circleMarker([v.lat, v.lon], {
+                        radius: 8, fillColor: markerColour, color: "#ffffff", weight: 2, fillOpacity: 1
+                    }).addTo(map).bindPopup(popupContent);
+                }
+            });
+        } catch (error) {
+            console.error("Map data sync failed:", error);
+        }
+    }
+
+    setInterval(fetchAndRenderVendors, 3000);
+    fetchAndRenderVendors();
+</script>
+{% endblock %}
