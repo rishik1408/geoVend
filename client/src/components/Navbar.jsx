@@ -6,10 +6,10 @@ import './Navbar.css';
 const Navbar = () => {
   return (
     <nav className="navbar">
-      <div className="navbar-brand">
+      <Link to="/" className="navbar-brand">
         <MapPin size={24} className="brand-icon" />
         <span className="brand-text">geoVend</span>
-      </div>
+      </Link>
       <div className="navbar-links">
         <Link to="/" className="nav-link active">HOME</Link>
         <Link to="/map" className="nav-link">DISCOVER</Link>

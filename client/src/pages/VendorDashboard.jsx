@@ -1,19 +1,39 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Navbar from '../components/Navbar';
 import { Power, AlertTriangle, MapPin, TrendingUp, Settings } from 'lucide-react';
 import { useAppContext } from '../context/AppContext';
 import './VendorDashboard.css';
 
 const VendorDashboard = () => {
-  const { currentUser, vendors, toggleVendorStatus } = useAppContext();
+  const { currentUser, vendors, toggleVendorStatus, updateVendorLocation } = useAppContext();
   const [zoningAlert, setZoningAlert] = useState(false);
   
   // Find the current vendor's data in the global list
-  const myVendorData = vendors.find(v => v.id === currentUser?.id) || {};
+  // currentUser has vendor_id from the login process if role is vendor
+  const myVendorData = vendors.find(v => v.id === currentUser?.vendor_id) || {};
   const isOnline = myVendorData.status === 'online';
 
-  const toggleStatus = () => {
-    toggleVendorStatus(currentUser.id);
+  // Simulate ESP32 GPS data updates when online
+  useEffect(() => {
+    let interval;
+    if (isOnline && currentUser?.vendor_id) {
+      interval = setInterval(() => {
+        // Randomly jitter the location slightly to simulate movement
+        const jitterLat = (Math.random() - 0.5) * 0.0002;
+        const jitterLng = (Math.random() - 0.5) * 0.0002;
+        updateVendorLocation(
+          currentUser.vendor_id, 
+          myVendorData.lat + jitterLat, 
+          myVendorData.lng + jitterLng
+        );
+      }, 5000); // Update every 5 seconds
+    }
+    return () => clearInterval(interval);
+  }, [isOnline, currentUser, myVendorData]);
+
+  const toggleStatus = async () => {
+    if (!currentUser?.vendor_id) return;
+    await toggleVendorStatus(currentUser.vendor_id);
     if (!isOnline) {
       // Simulate checking zoning upon going online
       setTimeout(() => setZoningAlert(true), 2000);

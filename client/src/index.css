@@ -129,12 +129,58 @@ button {
 }
 
 .glass-panel {
-  background: rgba(255, 255, 255, 0.7);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
-  border: 1px solid rgba(255, 255, 255, 0.3);
+  background: rgba(255, 255, 255, 0.6);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.4);
   border-radius: var(--radius-lg);
-  box-shadow: var(--shadow-lg);
+  box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.15);
+}
+
+/* Dynamic Backgrounds */
+.consumer-bg {
+  background: linear-gradient(135deg, #e0f2fe 0%, #dcfce7 100%);
+}
+
+.vendor-bg {
+  background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+  color: #f8fafc;
+}
+
+.admin-bg {
+  background: #2b2d42;
+  color: white;
+}
+
+.vendor-bg .glass-panel,
+.admin-bg .glass-panel {
+  background: rgba(15, 23, 42, 0.6);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: #f8fafc;
+}
+
+/* Specific Vendor Page text coloring */
+.vendor-bg .navbar-brand .brand-text,
+.vendor-bg .navbar-brand .brand-icon {
+  color: white;
+}
+
+.vendor-bg .dashboard-header h1,
+.vendor-bg .dashboard-header p {
+  color: white;
+}
+
+.vendor-bg .glass-panel h2, .vendor-bg .glass-panel h3,
+.admin-bg .glass-panel h2, .admin-bg .glass-panel h3 {
+  color: #f8fafc;
+}
+
+.vendor-bg .btn-outline {
+  border-color: rgba(255,255,255,0.3);
+  color: white;
+}
+.vendor-bg .btn-outline:hover {
+  background: rgba(255,255,255,0.1);
 }
 
 .page-container {

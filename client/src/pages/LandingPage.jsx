@@ -28,26 +28,46 @@ const LandingPage = () => {
           </div>
         </div>
       </main>
-
       <section className="overview-section">
         <div className="overview-container">
           <h2 className="overview-title">How geoVend Works</h2>
           <div className="overview-grid">
             <div className="overview-card glass-panel">
-              <div className="step-number">1</div>
+              <div className="card-icon blue">01</div>
               <h3>For Consumers</h3>
-              <p>Open the live discovery map to see exactly where your favorite street vendors are right now. No more guessing if they are open or where they moved.</p>
+              <p>Instantly locate your favorite street food or local goods. Our live map shows exactly who is active around you, reducing the friction of finding what you need.</p>
             </div>
+            
             <div className="overview-card glass-panel">
-              <div className="step-number">2</div>
+              <div className="card-icon teal">02</div>
               <h3>For Vendors</h3>
-              <p>Log in to your dashboard and toggle "Go Online". Your location is instantly broadcasted to nearby consumers, driving foot traffic directly to your cart.</p>
+              <p>Log in to your dashboard and toggle your status to "Online". Broadcast your real-time location to nearby consumers and increase your daily footprint.</p>
             </div>
+            
             <div className="overview-card glass-panel">
-              <div className="step-number">3</div>
-              <h3>For Cities</h3>
-              <p>geoVend uses smart zoning alerts to help vendors stay compliant with city regulations, ensuring safe and vibrant street commerce for everyone.</p>
+              <div className="card-icon mint">03</div>
+              <h3>For City Admins</h3>
+              <p>Access the command center to monitor city-wide vending activity. Geofencing ensures vendors comply with designated zones, keeping the streets orderly.</p>
             </div>
+          </div>
+        </div>
+      </section>
+
+      <section className="overview-section">
+        <div className="overview-container">
+          <h2 className="overview-title">About geoVend</h2>
+          
+          <div className="overview-text-block glass-panel mb-4">
+            <p>
+              <strong>geoVend</strong> is a real-time geospatial platform designed to modernise urban street commerce by seamlessly connecting consumers, vendors, and city administrators. Our ecosystem empowers consumers to discover nearby goods and street food through an interactive live map, whilst providing vendors with a digital dashboard to broadcast their presence and monitor customer engagement. For city administrators, geoVend offers a sophisticated command centre with geofencing capabilities to ensure zoning compliance and streamline urban management. By bringing India’s vital street vending community onto a trackable digital map, we aim to transform disorganised street commerce into a structured, accessible, and highly efficient network.
+            </p>
+          </div>
+
+          <div className="overview-text-block glass-panel hardware-module">
+            <h3>Hardware Module – ESP32 + NEO-6M GPS</h3>
+            <p>
+              The hardware node consists of an ESP32 microcontroller paired with a NEO-6M GPS module, connected via a UART serial interface. The GPS module continuously acquires real-time geospatial coordinates and transmits them to the ESP32, which processes and publishes the location data as a JSON payload over WiFi. This lightweight, low-power unit serves as the field-deployed telemetry node for each vending cart, enabling continuous location tracking and seamless integration with the backend infrastructure.
+            </p>
           </div>
         </div>
       </section>
