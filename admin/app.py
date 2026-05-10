@@ -1,7 +1,6 @@
-from flask import Flask, render_template, request, jsonify
+from flask import Flask, render_template, request, jsonify, redirect, url_for
 import sqlite3
 from datetime import datetime
-import os
 
 app = Flask(__name__)
 
@@ -11,6 +10,7 @@ LON_MIN, LON_MAX = 77.5160, 77.5210
 
 def init_db():
     with sqlite3.connect('database.db') as conn:
+        # Create vendors table
         conn.execute('''
             CREATE TABLE IF NOT EXISTS vendors (
                 cart_id TEXT PRIMARY KEY,
@@ -20,26 +20,63 @@ def init_db():
                 last_updated TEXT
             )
         ''')
-    print("Database initialised.")
+        # Create users table
+        conn.execute('''
+            CREATE TABLE IF NOT EXISTS users (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                username TEXT NOT NULL UNIQUE,
+                password TEXT NOT NULL,
+                role TEXT NOT NULL CHECK(role IN ('user', 'vendor', 'admin'))
+            )
+        ''')
+        # Insert test users
+        conn.execute("INSERT OR IGNORE INTO users (username, password, role) VALUES ('test_user', 'password123', 'user')")
+        conn.execute("INSERT OR IGNORE INTO users (username, password, role) VALUES ('test_vendor', 'password123', 'vendor')")
+        conn.execute("INSERT OR IGNORE INTO users (username, password, role) VALUES ('test_admin', 'password123', 'admin')")
+        
+    print("Database initialised and seeded with test users.")
 
 def check_geofence(lat, lon):
     return LAT_MIN <= lat <= LAT_MAX and LON_MIN <= lon <= LON_MAX
 
-# --- PORTAL ROUTES (Customer & Vendor) ---
+# --- AUTHENTICATION ROUTES ---
+
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+    if request.method == 'POST':
+        role = request.form.get('role')
+        username = request.form.get('username')
+        password = request.form.get('password')
+
+        with sqlite3.connect('database.db') as conn:
+            conn.row_factory = sqlite3.Row
+            user = conn.execute('SELECT * FROM users WHERE username = ? AND password = ? AND role = ?', 
+                                (username, password, role)).fetchone()
+
+        if user:
+            if role == 'admin':
+                return redirect(url_for('admin_dashboard'))
+            elif role == 'vendor':
+                return redirect(url_for('vendor_portal'))
+            else:
+                return redirect(url_for('customer_map'))
+        else:
+            return render_template('login.html', error="Invalid credentials or incorrect role.")
+
+    return render_template('login.html')
+
+# --- PORTAL ROUTES ---
 
 @app.route('/')
 def index():
-    """Main Landing Page / Welcome Portal."""
     return render_template('dashboard.html')
 
 @app.route('/map')
 def customer_map():
-    """Customer View: Live map to find nearby vendors."""
     return render_template('customer_map.html')
 
 @app.route('/vendor')
 def vendor_portal():
-    """Vendor View: Personal compliance and status."""
     return render_template('vendor_portal.html')
 
 # --- ADMIN PORTAL ROUTES ---
@@ -53,17 +90,14 @@ def admin_dashboard():
 
 @app.route('/admin/map')
 def admin_map():
-    """Admin God-Mode Map: Includes zoning overlays."""
     return render_template('admin_map.html')
 
 @app.route('/admin/directory')
 def admin_directory():
-    """Admin CRM: Detailed table of all registered vendors."""
     return render_template('admin_directory.html')
 
 @app.route('/admin/analytics')
 def admin_analytics():
-    """Admin Analytics: Historical heatmaps and IoT data."""
     return render_template('admin_analytics.html')
 
 # --- BACKEND API ROUTES ---
