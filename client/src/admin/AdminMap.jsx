@@ -1,6 +1,6 @@
 import React from 'react';
 import { MapContainer, TileLayer, Marker, Popup, GeoJSON } from 'react-leaflet';
-import { Store } from 'lucide-react';
+import { CheckCircle2, XCircle } from 'lucide-react';
 import { useAppContext } from '../context/AppContext';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
@@ -32,11 +32,11 @@ const AdminMap = () => {
         <div className="legend-item">
           <span className="color-box green"></span> Main Vending Area
         </div>
-        <div className="legend-item">
-          <span className="status-dot online"></span> Vendor Online
+        <div className="legend-item flex items-center gap-2">
+          <CheckCircle2 size={16} className="text-green-500" /> Vendor Online
         </div>
-        <div className="legend-item">
-          <span className="status-dot offline"></span> Vendor Offline
+        <div className="legend-item flex items-center gap-2">
+          <XCircle size={16} className="text-red-500" /> Vendor Offline
         </div>
       </div>
       

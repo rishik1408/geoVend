@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import Navbar from '../components/Navbar';
 import { Power, AlertTriangle, MapPin, TrendingUp, Settings } from 'lucide-react';
 import { useAppContext } from '../context/AppContext';
@@ -52,10 +53,10 @@ const VendorDashboard = () => {
             <h1>Vendor Dashboard</h1>
             <p>Welcome back, {currentUser?.name || 'Vendor'}</p>
           </div>
-          <button className="btn btn-outline">
+          <Link to="/vendor/profile" className="btn btn-outline">
             <Settings size={18} />
             Manage Profile
-          </button>
+          </Link>
         </div>
 
         {zoningAlert && (

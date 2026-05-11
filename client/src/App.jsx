@@ -1,9 +1,10 @@
 import React, { useEffect } from 'react';
-import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
+import { HashRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
 import LandingPage from './pages/LandingPage';
 import Auth from './pages/Auth';
 import DiscoveryMap from './pages/DiscoveryMap';
 import VendorDashboard from './pages/VendorDashboard';
+import VendorProfile from './pages/VendorProfile';
 import ConsumerDashboard from './pages/ConsumerDashboard';
 import AdminLayout from './admin/AdminLayout';
 import AdminDashboard from './admin/AdminDashboard';
@@ -45,6 +46,11 @@ function App() {
           <Route path="/vendor/dashboard" element={
             <ProtectedVendorRoute>
               <VendorDashboard />
+            </ProtectedVendorRoute>
+          } />
+          <Route path="/vendor/profile" element={
+            <ProtectedVendorRoute>
+              <VendorProfile />
             </ProtectedVendorRoute>
           } />
 

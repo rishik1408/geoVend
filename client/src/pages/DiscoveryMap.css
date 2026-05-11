@@ -21,7 +21,7 @@
 
 .map-controls {
   position: absolute;
-  top: 80px; /* Below Navbar */
+  top: var(--spacing-lg);
   left: 50%;
   transform: translateX(-50%);
   z-index: 10;
