@@ -8,16 +8,16 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/rudraworkswcode/VENDtrack.git"
+    "url": "git+https://github.com/rishik1408/geoVend.git"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "type": "commonjs",
   "bugs": {
-    "url": "https://github.com/rudraworkswcode/VENDtrack/issues"
+    "url": "https://github.com/rishik1408/geoVend/issues"
   },
-  "homepage": "https://github.com/rudraworkswcode/VENDtrack#readme",
+  "homepage": "https://github.com/rishik1408/geoVend#readme",
   "dependencies": {
     "@supabase/supabase-js": "^2.105.4",
     "mqtt": "^5.15.1"
