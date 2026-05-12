@@ -4,28 +4,24 @@
   --color-deep-navy: #0D1B2A;
   --color-bright-teal: #2EC4B6;
   --font-main: 'Inter', system-ui, -apple-system, sans-serif;
-  --font-heading: 'Outfit', system-ui, -apple-system, sans-serif;
+  --font-heading: 'Syne', system-ui, -apple-system, sans-serif;
 }
 
 :root {
-  /* Legacy Color Palette (Keeping for existing components not yet migrated) */
-  --color-primary-dark: #0a1f3a;   /* Deep Blue */
-  --color-primary: #1e3a5f;        /* Medium Blue */
-  --color-secondary-dark: #128c7e; /* Dark Teal */
-  --color-secondary: #20b2aa;      /* Light Sea Green / Teal */
-  --color-accent: #6ee7b7;         /* Mint Green */
-  --color-accent-light: #d1fae5;   /* Light Mint */
-  --color-background: #f0fdfa;     /* Very Light Mint/White */
+  --color-primary-dark: #0D1B2A;
+  --color-primary: #1a2f45;
+  --color-secondary-dark: #2EC4B6;
+  --color-secondary: #25b0a4;
+  --color-accent: #2EC4B6;
+  --color-background: #f5f5f0;
   --color-surface: #ffffff;
-  --color-text-main: #0f172a;
-  --color-text-muted: #475569;
+  --color-text-main: #0D1B2A;
+  --color-text-muted: #64748b;
   --color-text-inverse: #ffffff;
 
-  /* Typography */
-  --font-main: 'Inter', system-ui, -apple-system, sans-serif;
-  --font-heading: 'Outfit', system-ui, -apple-system, sans-serif;
+  --font-main: 'Inter', system-ui, sans-serif;
+  --font-heading: 'Syne', system-ui, sans-serif;
 
-  /* Spacing */
   --spacing-xs: 0.25rem;
   --spacing-sm: 0.5rem;
   --spacing-md: 1rem;
@@ -34,17 +30,15 @@
   --spacing-2xl: 3rem;
   --spacing-3xl: 4rem;
 
-  /* Borders & Shadows */
   --radius-sm: 0.25rem;
   --radius-md: 0.5rem;
   --radius-lg: 1rem;
   --radius-full: 9999px;
-  
+
   --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
   --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
   --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
-  
-  /* Transitions */
+
   --transition-fast: 150ms ease-in-out;
   --transition-normal: 300ms ease-in-out;
 }
@@ -81,119 +75,76 @@ button {
   font-family: var(--font-main);
 }
 
-/* Common UI Elements */
+/* Common buttons */
 .btn {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  padding: var(--spacing-sm) var(--spacing-lg);
-  border-radius: var(--radius-full);
+  padding: 12px 24px;
+  border-radius: 10px;
   font-weight: 600;
-  transition: all var(--transition-fast);
-  gap: var(--spacing-sm);
+  font-size: 0.85rem;
+  transition: all 0.2s ease;
+  gap: 8px;
+  font-family: 'Inter', sans-serif;
 }
 
 .btn-primary {
-  background-color: var(--color-primary-dark);
-  color: var(--color-text-inverse);
-  box-shadow: var(--shadow-md);
+  background-color: #0D1B2A;
+  color: #fff;
 }
-
 .btn-primary:hover {
-  background-color: var(--color-primary);
+  background-color: #162d4a;
   transform: translateY(-2px);
-  box-shadow: var(--shadow-lg);
+  box-shadow: 0 6px 20px rgba(13,27,42,0.2);
 }
 
 .btn-outline {
   background-color: transparent;
-  color: var(--color-secondary-dark);
-  border: 2px solid var(--color-secondary-dark);
+  color: #0D1B2A;
+  border: 2px solid rgba(13,27,42,0.15);
 }
-
 .btn-outline:hover {
-  background-color: var(--color-secondary-dark);
-  color: var(--color-text-inverse);
+  border-color: #0D1B2A;
 }
 
-/* Topographic/Wave utility classes */
-.wave-bg {
-  position: relative;
-  overflow: hidden;
-}
-
-.wave-bg::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  right: 0;
-  bottom: 0;
-  left: 0;
-  z-index: -1;
-  background-image: url('/wave-graphic.svg'); /* We'll create or mock this */
-  background-size: cover;
-  background-position: right center;
-  background-repeat: no-repeat;
-  opacity: 0.9;
-}
-
-.glass-panel {
-  background: rgba(255, 255, 255, 0.6);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  border: 1px solid rgba(255, 255, 255, 0.4);
-  border-radius: var(--radius-lg);
-  box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.15);
-}
-
-/* Dynamic Backgrounds */
+/* Backgrounds */
 .consumer-bg {
-  background: linear-gradient(135deg, #e0f2fe 0%, #dcfce7 100%);
+  background: #f5f5f0;
 }
 
 .vendor-bg {
-  background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+  background: #0D1B2A;
   color: #f8fafc;
 }
 
 .admin-bg {
-  background: #2b2d42;
+  background: #0a1422;
   color: white;
 }
 
-.vendor-bg .glass-panel,
-.admin-bg .glass-panel {
-  background: rgba(15, 23, 42, 0.6);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  color: #f8fafc;
-}
-
-/* Specific Vendor Page text coloring */
-.vendor-bg .navbar-brand .brand-text,
-.vendor-bg .navbar-brand .brand-icon {
-  color: white;
-}
-
-.vendor-bg .dashboard-header h1,
-.vendor-bg .dashboard-header p {
-  color: white;
-}
-
-.vendor-bg .glass-panel h2, .vendor-bg .glass-panel h3,
-.admin-bg .glass-panel h2, .admin-bg .glass-panel h3 {
-  color: #f8fafc;
-}
+.vendor-bg .navbar-brand, .vendor-bg .brand-text { color: white; }
+.vendor-bg .nav-link { color: rgba(255,255,255,0.5); }
+.vendor-bg .nav-link:hover, .vendor-bg .nav-link.active { color: #fff; }
 
 .vendor-bg .btn-outline {
-  border-color: rgba(255,255,255,0.3);
+  border-color: rgba(255,255,255,0.2);
   color: white;
 }
 .vendor-bg .btn-outline:hover {
-  background: rgba(255,255,255,0.1);
+  background: rgba(255,255,255,0.08);
 }
 
 .page-container {
   min-height: 100vh;
   display: flex;
   flex-direction: column;
+}
+
+/* Glass panels (legacy compat) */
+.glass-panel {
+  background: rgba(255, 255, 255, 0.04);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 14px;
 }

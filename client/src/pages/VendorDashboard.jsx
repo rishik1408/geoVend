@@ -8,26 +8,23 @@ import './VendorDashboard.css';
 const VendorDashboard = () => {
   const { currentUser, vendors, toggleVendorStatus, updateVendorLocation } = useAppContext();
   const [zoningAlert, setZoningAlert] = useState(false);
-  
-  // Find the current vendor's data in the global list
-  // currentUser has vendor_id from the login process if role is vendor
+
   const myVendorData = vendors.find(v => v.id === currentUser?.vendor_id) || {};
   const isOnline = myVendorData.status === 'online';
 
-  // Simulate ESP32 GPS data updates when online
+  // Simulate GPS jitter when online (fallback if MQTT isn't sending)
   useEffect(() => {
     let interval;
     if (isOnline && currentUser?.vendor_id) {
       interval = setInterval(() => {
-        // Randomly jitter the location slightly to simulate movement
-        const jitterLat = (Math.random() - 0.5) * 0.0002;
-        const jitterLng = (Math.random() - 0.5) * 0.0002;
+        const jLat = (Math.random() - 0.5) * 0.0002;
+        const jLng = (Math.random() - 0.5) * 0.0002;
         updateVendorLocation(
-          currentUser.vendor_id, 
-          myVendorData.lat + jitterLat, 
-          myVendorData.lng + jitterLng
+          currentUser.vendor_id,
+          (myVendorData.lat || 12.9015) + jLat,
+          (myVendorData.lng || 77.518) + jLng
         );
-      }, 5000); // Update every 5 seconds
+      }, 5000);
     }
     return () => clearInterval(interval);
   }, [isOnline, currentUser, myVendorData]);
@@ -35,97 +32,88 @@ const VendorDashboard = () => {
   const toggleStatus = async () => {
     if (!currentUser?.vendor_id) return;
     await toggleVendorStatus(currentUser.vendor_id);
-    if (!isOnline) {
-      // Simulate checking zoning upon going online
-      setTimeout(() => setZoningAlert(true), 2000);
-    } else {
-      setZoningAlert(false);
-    }
+    if (!isOnline) setTimeout(() => setZoningAlert(true), 2000);
+    else setZoningAlert(false);
   };
 
+  const lat = myVendorData.lat ? myVendorData.lat.toFixed(6) : '—';
+  const lng = myVendorData.lng ? myVendorData.lng.toFixed(6) : '—';
+
   return (
-    <div className="dashboard-container wave-bg">
+    <div className="vd-page">
       <Navbar />
-      
-      <main className="dashboard-main">
-        <div className="dashboard-header">
+
+      <main className="vd-main">
+        <div className="vd-header">
           <div>
             <h1>Vendor Dashboard</h1>
             <p>Welcome back, {currentUser?.name || 'Vendor'}</p>
           </div>
-          <Link to="/vendor/profile" className="btn btn-outline">
-            <Settings size={18} />
-            Manage Profile
+          <Link to="/vendor/profile" className="vd-profile-link">
+            <Settings size={16} /> Manage Profile
           </Link>
         </div>
 
         {zoningAlert && (
-          <div className="alert-banner">
-            <AlertTriangle size={20} className="alert-icon" />
-            <div className="alert-content">
-              <strong>Zoning Alert:</strong> You are currently near a restricted vending zone (Sector 4B). Please ensure you remain within the permitted boundaries.
-            </div>
-            <button className="alert-close" onClick={() => setZoningAlert(false)}>×</button>
+          <div className="vd-alert">
+            <AlertTriangle size={18} />
+            <span><strong>Zoning Alert:</strong> You are near a restricted vending zone (Sector 4B). Stay within permitted boundaries.</span>
+            <button className="vd-alert-close" onClick={() => setZoningAlert(false)}>×</button>
           </div>
         )}
 
-        <div className="dashboard-grid">
-          {/* Main Status Card */}
-          <div className="dashboard-card status-card glass-panel">
-            <h2>Current Status</h2>
-            <div className={`status-indicator ${isOnline ? 'online' : 'offline'}`}>
-              <div className="pulse-ring"></div>
-              <span>{isOnline ? 'ONLINE & TRACKING' : 'OFFLINE'}</span>
+        <div className="vd-grid">
+          {/* Status Card */}
+          <div className="vd-card vd-status">
+            <div className={`status-ring ${isOnline ? 'online' : 'offline'}`}>
+              <Power size={36} color={isOnline ? '#2EC4B6' : 'rgba(255,255,255,0.15)'} />
             </div>
-            
-            <button 
-              className={`toggle-btn ${isOnline ? 'btn-stop' : 'btn-start'}`}
-              onClick={toggleStatus}
-            >
-              <Power size={24} />
+            <span className={`status-label ${isOnline ? 'on' : 'off'}`}>
+              {isOnline ? 'ONLINE & TRACKING' : 'OFFLINE'}
+            </span>
+            <p className="status-note">
+              {isOnline ? 'Your location is visible to consumers on the discovery map.' : 'Turn on to start broadcasting your location via ESP32 GPS.'}
+            </p>
+            <button className={`power-btn ${isOnline ? 'stop' : 'start'}`} onClick={toggleStatus}>
+              <Power size={20} />
               {isOnline ? 'GO OFFLINE' : 'GO ONLINE'}
             </button>
-            <p className="status-note">
-              {isOnline ? 'Your location is visible to consumers.' : 'Turn on to start broadcasting your location.'}
-            </p>
           </div>
 
-          {/* Location Info Card */}
-          <div className="dashboard-card info-card glass-panel">
-            <div className="card-header">
-              <MapPin size={20} />
-              <h2>Location Data</h2>
-            </div>
-            <div className="info-list">
-              <div className="info-item">
-                <span className="label">Current Zone</span>
-                <span className="value">Downtown Market Area</span>
+          {/* Location Data — REAL coordinates */}
+          <div className="vd-card">
+            <div className="vd-card-header"><MapPin size={16} /> Location Data</div>
+            <div className="vd-info-list">
+              <div className="vd-info-row">
+                <span className="vd-info-label">Current Zone</span>
+                <span className="vd-info-value">Downtown Market Area</span>
               </div>
-              <div className="info-item">
-                <span className="label">Coordinates</span>
-                <span className="value">51.505, -0.09</span>
+              <div className="vd-info-row">
+                <span className="vd-info-label">Latitude</span>
+                <span className="vd-info-value" style={{ fontFamily: "'Inter', monospace" }}>{lat}</span>
               </div>
-              <div className="info-item">
-                <span className="label">Last Ping</span>
-                <span className="value">{isOnline ? 'Just now' : '2 hours ago'}</span>
+              <div className="vd-info-row">
+                <span className="vd-info-label">Longitude</span>
+                <span className="vd-info-value" style={{ fontFamily: "'Inter', monospace" }}>{lng}</span>
+              </div>
+              <div className="vd-info-row">
+                <span className="vd-info-label">Last Ping</span>
+                <span className="vd-info-value">{isOnline ? 'Just now' : '2 hours ago'}</span>
               </div>
             </div>
           </div>
 
-          {/* Quick Insights Card */}
-          <div className="dashboard-card stats-card glass-panel">
-            <div className="card-header">
-              <TrendingUp size={20} />
-              <h2>Quick Insights</h2>
-            </div>
-            <div className="stats-grid">
-              <div className="stat-box">
-                <span className="stat-value">124</span>
-                <span className="stat-label">Profile Views Today</span>
+          {/* Quick Insights */}
+          <div className="vd-card">
+            <div className="vd-card-header"><TrendingUp size={16} /> Quick Insights</div>
+            <div className="vd-stats">
+              <div className="vd-stat">
+                <span className="vd-stat-value">124</span>
+                <span className="vd-stat-label">Profile Views Today</span>
               </div>
-              <div className="stat-box">
-                <span className="stat-value">4.8★</span>
-                <span className="stat-label">Average Rating</span>
+              <div className="vd-stat">
+                <span className="vd-stat-value">4.8★</span>
+                <span className="vd-stat-label">Average Rating</span>
               </div>
             </div>
           </div>

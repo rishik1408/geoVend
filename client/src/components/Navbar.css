@@ -2,7 +2,7 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: var(--spacing-md) var(--spacing-3xl);
+  padding: 20px 56px;
   background: transparent;
   position: relative;
   z-index: 100;
@@ -11,55 +11,58 @@
 .navbar-brand {
   display: flex;
   align-items: center;
-  gap: var(--spacing-sm);
-  color: var(--color-primary-dark);
+  gap: 8px;
+  color: #0D1B2A;
+  text-decoration: none;
 }
 
 .brand-icon {
-  color: var(--color-secondary-dark);
+  color: #2EC4B6;
 }
 
 .brand-text {
-  font-family: var(--font-heading);
-  font-size: 1.5rem;
-  font-weight: 700;
+  font-family: 'Syne', sans-serif;
+  font-size: 1.3rem;
+  font-weight: 800;
   letter-spacing: -0.5px;
 }
 
 .navbar-links {
   display: flex;
   align-items: center;
-  gap: var(--spacing-2xl);
+  gap: 36px;
 }
 
 .nav-link {
-  font-family: var(--font-main);
-  font-size: 0.875rem;
+  font-family: 'Inter', sans-serif;
+  font-size: 0.75rem;
   font-weight: 600;
-  color: var(--color-text-muted);
-  letter-spacing: 1px;
+  color: #64748b;
+  letter-spacing: 1.5px;
   text-transform: uppercase;
-  transition: color var(--transition-fast);
+  transition: color 0.2s ease;
+  text-decoration: none;
 }
 
 .nav-link:hover, .nav-link.active {
-  color: var(--color-primary-dark);
+  color: #0D1B2A;
 }
 
 .nav-search {
-  color: var(--color-text-muted);
-  transition: color var(--transition-fast);
+  display: none;
 }
 
-.nav-search:hover {
-  color: var(--color-primary-dark);
+@media (max-width: 1024px) {
+  .navbar {
+    padding: 16px 32px;
+  }
 }
 
 @media (max-width: 768px) {
   .navbar {
-    padding: var(--spacing-md);
+    padding: 16px 20px;
   }
   .navbar-links {
-    display: none; /* In a real app, we'd add a hamburger menu */
+    display: none;
   }
 }

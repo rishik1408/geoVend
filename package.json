@@ -1,0 +1,25 @@
+{
+  "name": "vendtrack",
+  "version": "1.0.0",
+  "description": "A simple webpage, that uses a python backend, basic html and css styling for the webpages, and can fetch geographical location data from an ESP32 module via WiFi which is stored in a SQLlite database.",
+  "main": "mqtt_subscriber.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/rudraworkswcode/VENDtrack.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/rudraworkswcode/VENDtrack/issues"
+  },
+  "homepage": "https://github.com/rudraworkswcode/VENDtrack#readme",
+  "dependencies": {
+    "@supabase/supabase-js": "^2.105.4",
+    "mqtt": "^5.15.1"
+  }
+}
