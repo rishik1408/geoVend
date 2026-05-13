@@ -6,7 +6,11 @@
  * and the corresponding vendor's lat/lng is updated in Supabase.
  *
  * Expected MQTT payload (JSON):
- *   { "vendor_id": 1, "lat": 12.9015, "lng": 77.518 }
+ *   { "vendor_id": "chiranthan", "lat": 12.9015, "lng": 77.518 }
+ *
+ * vendor_id can be:
+ *   - A UUID (matched directly against vendors.id)
+ *   - A vendor name (matched case-insensitively against vendors.name)
  *
  * Usage:
  *   node mqtt_subscriber.js
@@ -23,6 +27,36 @@ const SUPABASE_URL = process.env.SUPABASE_URL || 'https://qfsesquowvfxccqwjmth.s
 const SUPABASE_KEY = process.env.SUPABASE_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFmc2VzcXVvd3ZmeGNjcXdqbXRoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzg0MDI3NzIsImV4cCI6MjA5Mzk3ODc3Mn0.IMt6yo71dCZtYGJLI2OSAKLi7ZRBxYwNjh08DywNTZY';
 
 const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
+
+// ── Helpers ────────────────────────────────────────────────────
+const UUID_REGEX = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+
+/**
+ * Resolve a vendor_id to a UUID.
+ * If it's already a UUID, return it directly.
+ * Otherwise, look up the vendor by name (case-insensitive).
+ */
+async function resolveVendorId(vendorId) {
+  if (UUID_REGEX.test(vendorId)) {
+    return vendorId;
+  }
+
+  // Look up by name (case-insensitive)
+  const { data, error } = await supabase
+    .from('vendors')
+    .select('id')
+    .ilike('name', `%${vendorId}%`)
+    .limit(1)
+    .single();
+
+  if (error || !data) {
+    console.warn(`[geoVend MQTT] ⚠ Could not resolve vendor name "${vendorId}" to an ID`);
+    return null;
+  }
+
+  console.log(`[geoVend MQTT] ℹ Resolved "${vendorId}" → ${data.id}`);
+  return data.id;
+}
 
 // ── MQTT Client ────────────────────────────────────────────────
 console.log(`[geoVend MQTT] Connecting to broker: ${MQTT_BROKER}`);
@@ -48,11 +82,23 @@ client.on('connect', () => {
 });
 
 client.on('message', async (topic, message) => {
-  const raw = message.toString();
+  const raw = message.toString().trim();
   console.log(`[geoVend MQTT] ← Received: ${raw}`);
 
   try {
-    const payload = JSON.parse(raw);
+    // ESP32 often sends malformed JSON with unquoted string values, e.g.:
+    //   {"vendor_id":Chirantan,"lat":12.900890,"lng":77.517758}
+    // Fix: wrap unquoted values in quotes so JSON.parse can handle it
+    const fixed = raw.replace(/:([A-Za-z_][A-Za-z0-9_ ]*?)([,}])/g, ':"$1"$2');
+    
+    let payload;
+    try {
+      payload = JSON.parse(raw);
+    } catch (_) {
+      console.log(`[geoVend MQTT] ℹ Fixing malformed JSON: ${fixed}`);
+      payload = JSON.parse(fixed);
+    }
+
     const { vendor_id, lat, lng } = payload;
 
     if (!vendor_id || lat == null || lng == null) {
@@ -60,16 +106,20 @@ client.on('message', async (topic, message) => {
       return;
     }
 
+    // Resolve vendor_id (could be UUID or name)
+    const resolvedId = await resolveVendorId(String(vendor_id));
+    if (!resolvedId) return;
+
     // Update Supabase
     const { error } = await supabase
       .from('vendors')
       .update({ lat: parseFloat(lat), lng: parseFloat(lng) })
-      .eq('id', vendor_id);
+      .eq('id', resolvedId);
 
     if (error) {
-      console.error(`[geoVend MQTT] ✗ Supabase update failed for vendor ${vendor_id}:`, error.message);
+      console.error(`[geoVend MQTT] ✗ Supabase update failed for vendor ${resolvedId}:`, error.message);
     } else {
-      console.log(`[geoVend MQTT] ✓ Vendor ${vendor_id} location updated → (${lat}, ${lng})`);
+      console.log(`[geoVend MQTT] ✓ Vendor ${resolvedId} location updated → (${lat}, ${lng})`);
     }
   } catch (e) {
     console.error('[geoVend MQTT] ✗ Failed to parse message:', e.message);

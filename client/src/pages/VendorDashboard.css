@@ -53,6 +53,12 @@
   margin-top: 4px;
 }
 
+.vd-header-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
 .vd-profile-link {
   display: inline-flex;
   align-items: center;
@@ -70,6 +76,25 @@
 .vd-profile-link:hover {
   border-color: #2EC4B6;
   color: #2EC4B6;
+}
+
+.vd-logout-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 20px;
+  border-radius: 10px;
+  background: rgba(239,68,68,0.08);
+  border: 1px solid rgba(239,68,68,0.15);
+  color: #ef4444;
+  font-family: 'Inter', sans-serif;
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.vd-logout-btn:hover {
+  background: rgba(239,68,68,0.18);
 }
 
 /* Alert */

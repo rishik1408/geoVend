@@ -5,8 +5,19 @@ import { useAppContext } from '../context/AppContext';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 
+// Fix for default marker icons in React-Leaflet
+delete L.Icon.Default.prototype._getIconUrl;
+L.Icon.Default.mergeOptions({
+  iconRetinaUrl: 'https://unpkg.com/leaflet@1.7.1/dist/images/marker-icon-2x.png',
+  iconUrl: 'https://unpkg.com/leaflet@1.7.1/dist/images/marker-icon.png',
+  shadowUrl: 'https://unpkg.com/leaflet@1.7.1/dist/images/marker-shadow.png',
+});
+
 const AdminMap = () => {
   const { vendors, mapData } = useAppContext();
+
+  // Filter vendors with valid coordinates to prevent Leaflet crashes
+  const validVendors = vendors.filter(v => v.lat != null && v.lng != null && !isNaN(Number(v.lat)) && !isNaN(Number(v.lng)));
 
   // Admin God-Mode Map: Show ALL vendors (online and offline)
   const geoJsonStyle = (feature) => {
@@ -32,15 +43,21 @@ const AdminMap = () => {
         <div className="legend-item">
           <span className="color-box green"></span> Main Vending Area
         </div>
-        <div className="legend-item flex items-center gap-2">
-          <CheckCircle2 size={16} className="text-green-500" /> Vendor Online
+        <div className="legend-item" style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+          <CheckCircle2 size={16} color="#22c55e" /> Vendor Online
         </div>
-        <div className="legend-item flex items-center gap-2">
-          <XCircle size={16} className="text-red-500" /> Vendor Offline
+        <div className="legend-item" style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+          <XCircle size={16} color="#ef4444" /> Vendor Offline
         </div>
       </div>
       
-      <MapContainer center={[12.9018, 77.5180]} zoom={17} scrollWheelZoom={true} className="admin-leaflet-map">
+      <MapContainer 
+        center={[12.9018, 77.5180]} 
+        zoom={17} 
+        scrollWheelZoom={true} 
+        className="admin-leaflet-map"
+        style={{ height: '100%', width: '100%' }}
+      >
         <TileLayer
           attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
           url="https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png"
@@ -53,10 +70,10 @@ const AdminMap = () => {
           />
         )}
         
-        {vendors.map(vendor => (
+        {validVendors.map(vendor => (
           <Marker 
             key={vendor.id} 
-            position={[vendor.lat, vendor.lng]}
+            position={[Number(vendor.lat), Number(vendor.lng)]}
           >
             <Popup>
               <strong>{vendor.name}</strong><br/>

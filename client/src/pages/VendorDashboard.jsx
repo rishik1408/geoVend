@@ -1,33 +1,17 @@
-import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import React, { useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 import Navbar from '../components/Navbar';
-import { Power, AlertTriangle, MapPin, TrendingUp, Settings } from 'lucide-react';
+import { Power, AlertTriangle, MapPin, TrendingUp, Settings, LogOut } from 'lucide-react';
 import { useAppContext } from '../context/AppContext';
 import './VendorDashboard.css';
 
 const VendorDashboard = () => {
-  const { currentUser, vendors, toggleVendorStatus, updateVendorLocation } = useAppContext();
+  const { currentUser, vendors, toggleVendorStatus, logout } = useAppContext();
+  const navigate = useNavigate();
   const [zoningAlert, setZoningAlert] = useState(false);
 
   const myVendorData = vendors.find(v => v.id === currentUser?.vendor_id) || {};
   const isOnline = myVendorData.status === 'online';
-
-  // Simulate GPS jitter when online (fallback if MQTT isn't sending)
-  useEffect(() => {
-    let interval;
-    if (isOnline && currentUser?.vendor_id) {
-      interval = setInterval(() => {
-        const jLat = (Math.random() - 0.5) * 0.0002;
-        const jLng = (Math.random() - 0.5) * 0.0002;
-        updateVendorLocation(
-          currentUser.vendor_id,
-          (myVendorData.lat || 12.9015) + jLat,
-          (myVendorData.lng || 77.518) + jLng
-        );
-      }, 5000);
-    }
-    return () => clearInterval(interval);
-  }, [isOnline, currentUser, myVendorData]);
 
   const toggleStatus = async () => {
     if (!currentUser?.vendor_id) return;
@@ -36,8 +20,13 @@ const VendorDashboard = () => {
     else setZoningAlert(false);
   };
 
-  const lat = myVendorData.lat ? myVendorData.lat.toFixed(6) : '—';
-  const lng = myVendorData.lng ? myVendorData.lng.toFixed(6) : '—';
+  const handleLogout = () => {
+    logout();
+    navigate('/');
+  };
+
+  const lat = myVendorData.lat ? Number(myVendorData.lat).toFixed(6) : '—';
+  const lng = myVendorData.lng ? Number(myVendorData.lng).toFixed(6) : '—';
 
   return (
     <div className="vd-page">
@@ -49,9 +38,14 @@ const VendorDashboard = () => {
             <h1>Vendor Dashboard</h1>
             <p>Welcome back, {currentUser?.name || 'Vendor'}</p>
           </div>
-          <Link to="/vendor/profile" className="vd-profile-link">
-            <Settings size={16} /> Manage Profile
-          </Link>
+          <div className="vd-header-actions">
+            <Link to="/vendor/profile" className="vd-profile-link">
+              <Settings size={16} /> Manage Profile
+            </Link>
+            <button className="vd-logout-btn" onClick={handleLogout}>
+              <LogOut size={16} /> Logout
+            </button>
+          </div>
         </div>
 
         {zoningAlert && (
@@ -80,7 +74,7 @@ const VendorDashboard = () => {
             </button>
           </div>
 
-          {/* Location Data — REAL coordinates */}
+          {/* Location Data — REAL coordinates from ESP32 via Supabase */}
           <div className="vd-card">
             <div className="vd-card-header"><MapPin size={16} /> Location Data</div>
             <div className="vd-info-list">
@@ -98,7 +92,7 @@ const VendorDashboard = () => {
               </div>
               <div className="vd-info-row">
                 <span className="vd-info-label">Last Ping</span>
-                <span className="vd-info-value">{isOnline ? 'Just now' : '2 hours ago'}</span>
+                <span className="vd-info-value">{isOnline ? 'Just now' : '—'}</span>
               </div>
             </div>
           </div>
