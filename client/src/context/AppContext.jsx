@@ -160,6 +160,23 @@ export const AppProvider = ({ children }) => {
       .eq('id', vendorId);
   };
 
+  const removeVendor = async (vendorId) => {
+    if (!window.confirm("Are you sure you want to permanently remove this vendor?")) return;
+    
+    // Optimistic update
+    setVendors(vendors.filter(v => v.id !== vendorId));
+    
+    const { error } = await supabase
+      .from('vendors')
+      .delete()
+      .eq('id', vendorId);
+      
+    if (error) {
+      alert("Failed to remove vendor: " + error.message);
+      fetchVendors(); // Revert on failure
+    }
+  };
+
   return (
     <AppContext.Provider value={{ 
       vendors, 
@@ -170,6 +187,7 @@ export const AppProvider = ({ children }) => {
       registerVendor,
       toggleVendorStatus,
       updateVendorLocation,
+      removeVendor,
       mapData
     }}>
       {children}

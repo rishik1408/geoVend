@@ -3,12 +3,12 @@ import { useAppContext } from '../context/AppContext';
 import { ShieldAlert, Ban } from 'lucide-react';
 
 const AdminDirectory = () => {
-  const { vendors } = useAppContext();
+  const { vendors, removeVendor } = useAppContext();
 
   return (
     <div className="admin-directory">
       <div className="table-container glass-panel">
-        <table className="admin-table">
+        <table className="admin-directory-table">
           <thead>
             <tr>
               <th>ID</th>
@@ -30,12 +30,12 @@ const AdminDirectory = () => {
                     {vendor.status}
                   </span>
                 </td>
-                <td className="code-font">{vendor.lat.toFixed(4)}, {vendor.lng.toFixed(4)}</td>
+                <td className="code-font">{vendor.lat ? vendor.lat.toFixed(4) : '—'}, {vendor.lng ? vendor.lng.toFixed(4) : '—'}</td>
                 <td className="action-cell">
-                  <button className="btn-icon warning" title="Issue Warning">
+                  <button className="btn-icon warning" title="Issue Warning" onClick={() => alert('Warning issued to ' + vendor.name)}>
                     <ShieldAlert size={16} />
                   </button>
-                  <button className="btn-icon danger" title="Suspend Account">
+                  <button className="btn-icon danger" title="Suspend Account" onClick={() => removeVendor(vendor.id)}>
                     <Ban size={16} />
                   </button>
                 </td>

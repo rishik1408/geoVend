@@ -185,7 +185,7 @@
 .discovery-map-legend {
   position: absolute;
   bottom: 30px;
-  left: 20px;
+  right: 20px;
   z-index: 1000;
   padding: var(--spacing-md);
   font-size: 0.875rem;
